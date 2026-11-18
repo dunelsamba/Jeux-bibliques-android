@@ -21,8 +21,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
-
       - name: APK de partage (installable directement sur un téléphone)
         run: |
           chmod +x gradlew
