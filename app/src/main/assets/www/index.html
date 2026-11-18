@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#3A0E1B">
+<title>Jeux bibliques</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* VOICE: chaleureux et soigné, pour un groupe réuni devant un écran
+   IDEA: une Bible reliée cuir : couverture bordeaux, tranches dorées, pages ivoire
+   PICTURE: le plateau de jeu lui-même, page ivoire à double filet doré sur fond de cuir
+   COLOUR and TYPE: cuir bordeaux, or à la feuille, ivoire ; Cinzel gravé + Plus Jakarta Sans
+   LAYOUT: en-tête cuir, rangée d'équipes, plateau en une colonne, fenêtres pour Jeopardy et réglages */
+:root{--lea:#3a0e1b;--lea2:#5c1a2d;--wine:#7b2036;--iv:#fbf6ea;--iv2:#f3ead6;--ink:#2b1b14;--mute:#76635a;
+--gold:#d4a24c;--gold2:#f4dc95;--gold3:#946520;--ok:#2f7d50;--bad:#b23a2c;--cream:#ecdcc4;
+--gilt:linear-gradient(135deg,#f7e4a8 0%,#d9a84f 35%,#a8772b 55%,#f2d68e 80%,#c99540 100%);
+--frame:0 40px 80px -40px rgba(0,0,0,.75),inset 0 0 0 1px rgba(148,101,32,.5),inset 0 0 0 8px var(--iv),inset 0 0 0 9px rgba(212,162,76,.5)}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--iv);font:16px/1.55 "Plus Jakarta Sans",system-ui,sans-serif;overflow-x:clip;
+background-color:var(--lea);background-image:radial-gradient(1200px 700px at 12% -10%,#702439 0%,transparent 60%),radial-gradient(900px 600px at 110% 110%,#5a1628 0%,transparent 55%);background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.22;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+header,main{position:relative;z-index:1}
+h1,h2,h3{margin:0;line-height:1.1;text-wrap:balance}
+:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}
+.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic.fill{fill:currentColor}
+.gilt{background:var(--gilt);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* En-tête */
+.hd{max-width:1240px;margin:auto;padding:16px max(4vw,16px) 8px;display:flex;align-items:center;gap:14px 18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;color:var(--iv);text-decoration:none}
+.logo{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--gilt);color:var(--lea);box-shadow:0 6px 16px -4px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.6)}
+.logo .ic{width:26px;height:26px;stroke-width:1.9}
+.brand b{display:block;font:700 22px/1.1 Cinzel,Georgia,serif}
+.brand small{display:block;font-size:13px;color:var(--cream);opacity:.8}
+.tabs{display:flex;gap:4px;margin-inline:auto;padding:5px;border-radius:999px;background:rgba(0,0,0,.24);border:1px solid rgba(212,162,76,.28);overflow-x:auto;scrollbar-width:none}
+.tabs a{flex:none;display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;color:var(--cream);text-decoration:none;font-weight:700;font-size:15px;transition:background .2s,color .2s}
+.tabs a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.tabs a.on{background:var(--gilt);color:var(--lea);box-shadow:0 4px 12px -4px rgba(0,0,0,.5)}
+.tools{display:flex;gap:6px}
+.ib{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--gold2);background:rgba(0,0,0,.22);border:1px solid rgba(212,162,76,.35);transition:background .2s}
+.ib:hover{background:rgba(0,0,0,.4)}
+@media(max-width:900px){.tabs{order:3;width:100%;margin:0}.tools{margin-left:auto}}
+
+main{max-width:1240px;margin:auto;padding:6px max(4vw,14px) 40px}
+
+/* Équipes */
+.teams{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 18px}
+.tm{display:flex;align-items:center;gap:10px;min-height:52px;padding:7px 14px 7px 7px;border-radius:999px;cursor:pointer;font:inherit;color:var(--iv);background:rgba(251,246,234,.07);border:1px solid rgba(212,162,76,.28);transition:background .2s,box-shadow .2s,border-color .2s}
+.tm:hover{background:rgba(251,246,234,.12)}
+.tm.on{background:rgba(251,246,234,.15);border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,162,76,.25),0 10px 24px -12px rgba(0,0,0,.7)}
+.av{width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--c);color:#1c0f0b;font:700 16px Cinzel,serif;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18),0 0 0 2px rgba(255,255,255,.25)}
+.tn{font-weight:700;max-width:11em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc{font:700 22px Cinzel,serif;color:var(--gold2);font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.tt{display:flex;align-items:center;gap:4px;padding:3px 9px 3px 7px;border-radius:999px;background:var(--gilt);color:var(--lea);font-size:12.5px;font-weight:800;white-space:nowrap}
+.tt .ic{width:11px;height:11px;fill:currentColor}
+.tm.add{color:var(--gold2);padding:7px 16px;font-weight:700}
+
+/* Page ivoire */
+.card{background:var(--iv);color:var(--ink);border-radius:26px;padding:clamp(22px,3.6vw,42px);box-shadow:var(--frame);animation:rise .4s ease}
+.gh h2{font:700 clamp(28px,3.6vw,40px) Cinzel,serif;color:var(--wine)}
+.gh p{color:var(--mute);margin:8px 0 24px;max-width:64ch;font-weight:500}
+.gtop{display:flex;align-items:center;gap:14px 18px;flex-wrap:wrap;margin-bottom:20px}
+.crumb{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--wine)}
+.prog{display:flex;align-items:center;gap:12px;margin-left:auto;flex-wrap:wrap}
+.dots{display:flex;gap:5px}
+.dots i{width:9px;height:9px;border-radius:50%;background:#e4d7bc}
+.dots i.d{background:var(--gold)}.dots i.c{background:var(--wine);transform:scale(1.35)}
+.cnt{font-weight:800;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#f4e7c9;color:var(--gold3);font-weight:800;font-size:14px;white-space:nowrap}
+.pill .ic{width:16px;height:16px}
+@media(max-width:640px){.dots{display:none}}
+
+.ring{position:relative;width:62px;height:62px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.rt{fill:none;stroke:#ece1c9;stroke-width:4}
+.rf{fill:none;stroke:var(--gold);stroke-width:4;stroke-linecap:round;stroke-dasharray:100;transition:stroke-dashoffset .1s linear,stroke .3s}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:700 21px Cinzel,serif;color:var(--ink);font-variant-numeric:tabular-nums}
+.ring.low .rf{stroke:var(--bad)}.ring.low b{color:var(--bad);animation:pulse 1s infinite}
+
+.q{font-size:clamp(22px,2.8vw,32px);font-weight:800;line-height:1.25;letter-spacing:-.01em;margin:2px 0 24px;text-wrap:balance}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.opts.one{grid-template-columns:minmax(0,1fr)}
+.opt{display:flex;align-items:center;gap:14px;min-height:64px;padding:12px 14px;border-radius:16px;text-align:left;cursor:pointer;color:var(--ink);font:600 18px/1.3 "Plus Jakarta Sans",sans-serif;background:#fffdf7;border:1px solid #e3d6bb;box-shadow:0 2px 0 #ebe0c8;transition:transform .15s,box-shadow .15s,border-color .15s,background .25s,opacity .25s}
+.opt:hover:not(:disabled){transform:translateY(-2px);border-color:var(--gold);box-shadow:0 12px 26px -16px rgba(90,40,10,.55)}
+.opt:disabled{cursor:default}
+.lt{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;background:var(--lea);color:var(--gold2);font:700 16px Cinzel,serif;transition:background .25s}
+.ot{flex:1}
+.st{width:28px;height:28px;flex:none;display:grid;place-items:center}
+.st .ic{width:24px;height:24px;stroke-width:2.6}
+.opt.ok{background:#e8f4eb;border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}.opt.ok .lt{background:var(--ok);color:#fff}.opt.ok .st{color:var(--ok)}
+.opt.ko{background:#f9e7e3;border-color:var(--bad)}.opt.ko .lt{background:var(--bad);color:#fff}.opt.ko .st{color:var(--bad)}
+.opt.dim{opacity:.45}.opt.gone{visibility:hidden}
+.shk{animation:shake .4s}
+
+.jk{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px dashed #e2d3b5}
+.jl{font-weight:800;color:var(--mute);font-size:14px;margin-right:4px}
+.jbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;font:700 15px "Plus Jakarta Sans",sans-serif;color:var(--gold3);background:linear-gradient(#fffaf0,#f5ead2);border:1px solid var(--gold);transition:transform .15s}
+.jbtn:hover:not(:disabled){transform:translateY(-1px)}
+.jbtn:disabled{opacity:.35;cursor:default}
+
+.fb{display:flex;gap:14px;align-items:flex-start;margin-top:20px;padding:16px 18px;border-radius:18px;animation:rise .35s ease}
+.fb.ok{background:#e9f4ec}.fb.ko{background:#f9eae6}
+.fi{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff}
+.fi .ic{stroke-width:2.6}
+.fb.ok .fi{background:var(--ok)}.fb.ko .fi{background:var(--bad)}
+.fb b{display:block;font-size:19px;font-weight:800}
+.fb p{margin:3px 0 6px;color:#4a3a32;max-width:72ch}
+.ref{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--wine)}
+.ref .ic{width:16px;height:16px}
+
+.nx,.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.row.c{justify-content:center}
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:10px 24px;border-radius:999px;border:0;cursor:pointer;text-decoration:none;font:800 16px "Plus Jakarta Sans",sans-serif;transition:transform .15s,box-shadow .15s}
+.btn>*{position:relative;z-index:1}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.gold{background:var(--gilt);color:var(--lea);box-shadow:0 10px 22px -12px rgba(120,70,10,.9),inset 0 1px 0 rgba(255,255,255,.6)}
+.btn.ghost{background:transparent;color:var(--wine);border:1px solid #dac7a1}
+.btn.sm{min-height:44px;padding:6px 16px;font-size:14.5px}
+.next.auto::before{content:"";position:absolute;inset:0;background:rgba(58,14,27,.2);transform-origin:left;animation:fill var(--d) linear forwards}
+
+/* Accueil */
+.home{animation:rise .4s ease}
+.hero{padding:clamp(14px,3vw,34px) 0 6px;max-width:760px}
+.hero h2{font:700 clamp(36px,5.4vw,60px)/1.05 Cinzel,serif}
+.hero p{color:var(--cream);font-size:18px;margin:14px 0 0;max-width:58ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px;margin-top:28px}
+.tile{display:flex;flex-direction:column;gap:10px;padding:26px 24px 22px;border-radius:24px;background:var(--iv);color:var(--ink);text-decoration:none;box-shadow:var(--frame);transition:transform .2s,box-shadow .2s}
+.tile:hover{transform:translateY(-5px)}
+.tic{width:58px;height:58px;border-radius:17px;display:grid;place-items:center;background:var(--lea);color:var(--gold2);box-shadow:inset 0 0 0 1px rgba(212,162,76,.5)}
+.tic .ic{width:30px;height:30px}
+.tile h3{font:700 23px Cinzel,serif;margin-top:6px}
+.tile p{margin:0;color:#5b4a41;flex:1}
+.meta{font-size:14px;font-weight:700;color:var(--gold3)}
+.go{display:flex;align-items:center;gap:6px;font-weight:800;color:var(--wine)}
+.go .ic{width:18px;height:18px;transition:transform .2s}
+.tile:hover .go .ic,.lvl:hover .go .ic{transform:translateX(4px)}
+.how{display:flex;flex-wrap:wrap;gap:12px 26px;margin-top:26px;color:var(--cream);font-weight:600;font-size:15px}
+.how span{display:flex;align-items:center;gap:10px}
+.how i{font-style:normal;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--gilt);color:var(--lea);font:700 14px Cinzel,serif}
+
+/* Quiz */
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px}
+.lvl{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:24px;border-radius:20px;text-align:left;cursor:pointer;font:inherit;color:var(--ink);background:linear-gradient(#fffdf6,#f7eedb);border:1px solid #e6d7b7;transition:transform .2s,border-color .2s,box-shadow .2s}
+.lvl:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 16px 30px -18px rgba(90,40,10,.6)}
+.stars{display:flex;gap:3px;color:var(--gold)}.stars .ic{width:19px;height:19px}
+.lvl h3{font:700 26px Cinzel,serif}
+.lvl p{margin:0 0 6px;color:var(--mute);font-weight:600}
+
+/* Qui suis-je */
+.who{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:24px;align-items:start}
+@media(max-width:780px){.who{grid-template-columns:minmax(0,1fr)}}
+.clues{display:grid;gap:10px}
+.clue{padding:12px 16px;border-radius:15px;background:#fff8e7;border:1px solid #ecdcb8}
+.clue p{margin:3px 0 0;font-size:17px;font-weight:600}
+.cn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--gold3)}
+.cn .ic{width:16px;height:16px}
+.clue.lock{background:repeating-linear-gradient(135deg,#f5edda 0 10px,#f0e6cf 10px 20px);border-style:dashed}
+.clue.lock .cn,.clue.lock p{color:#a6927f}.clue.lock p{font-size:15px}
+.clue.new{animation:rise .45s ease;border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,162,76,.25)}
+.worth{text-align:center;padding:18px;margin-bottom:12px;border-radius:20px;background:var(--lea);color:var(--iv);box-shadow:inset 0 0 0 1px rgba(212,162,76,.45)}
+.worth b{display:block;font:700 48px/1 Cinzel,serif;margin:6px 0}
+.worth small{display:block;font-size:13.5px;font-weight:600;color:var(--cream)}
+
+/* Vrai ou faux */
+.stmt{position:relative;margin:2px 0 26px;padding:28px 28px 28px 66px;border-radius:20px;background:#fff8e7;border:1px solid #ecdcb8;font-size:clamp(21px,2.6vw,30px);font-weight:800;line-height:1.3;text-wrap:balance}
+.stmt::before{content:"“";position:absolute;left:18px;top:6px;font:700 76px/1 Cinzel,serif;color:var(--gold)}
+.vf{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.vbtn{display:flex;align-items:center;justify-content:center;gap:12px;min-height:86px;border:0;border-radius:20px;cursor:pointer;color:#fff;font:800 24px "Plus Jakarta Sans",sans-serif;box-shadow:0 6px 0 rgba(0,0,0,.2);transition:transform .12s,box-shadow .12s,opacity .25s}
+.vbtn .ic{width:28px;height:28px;stroke-width:2.6}
+.vbtn.yes{background:linear-gradient(#3e9866,#2a6f47)}.vbtn.no{background:linear-gradient(#c6533f,#992f21)}
+.vbtn:hover:not(:disabled){transform:translateY(-2px)}
+.vbtn:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.vbtn:disabled{cursor:default}.vbtn.dim{opacity:.3}
+.vbtn.ok{outline:4px solid var(--ok);outline-offset:4px}.vbtn.ko{outline:4px solid var(--bad);outline-offset:4px}
+kbd{font:700 12px "Plus Jakarta Sans",sans-serif;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.22)}
+
+/* Jeopardy */
+.jgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.jh{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:88px;padding:12px 6px;border-radius:15px;text-align:center;background:var(--lea);color:var(--iv);font:700 clamp(11px,1.3vw,15px)/1.15 Cinzel,serif;box-shadow:inset 0 0 0 1px rgba(212,162,76,.45)}
+.jh .ic{width:24px;height:24px;color:var(--gold2)}
+.cell{display:grid;place-items:center;min-height:clamp(58px,8vw,86px);border:0;border-radius:15px;cursor:pointer;font:700 clamp(18px,2.6vw,30px) Cinzel,serif;background:linear-gradient(160deg,#6c2035,#43101e);box-shadow:inset 0 0 0 1px rgba(212,162,76,.5),0 8px 16px -10px rgba(0,0,0,.7);transition:transform .15s,box-shadow .15s}
+.cell span{background:var(--gilt);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cell:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--gold2),0 14px 22px -12px rgba(0,0,0,.7)}
+.cell.dn{cursor:default;background:#efe6d1;box-shadow:inset 0 0 0 1px #e1d2b0}
+.dd{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#1c0f0b}
+.dd .ic{stroke-width:2.6}
+@media(max-width:620px){.jgrid{gap:5px}.jh{min-height:62px;padding:6px 3px;font:800 10px/1.15 "Plus Jakarta Sans",sans-serif;overflow-wrap:anywhere;hyphens:auto}.jh .ic{display:none}.dd{width:28px;height:28px}}
+
+/* Fenêtres */
+.ov{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;overflow:auto;background:rgba(22,5,11,.74);backdrop-filter:blur(5px)}
+.ov[hidden]{display:none}
+.modal{width:min(740px,100%);animation:pop .3s ease}
+.mh{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.dbl{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;padding:7px 15px;border-radius:999px;background:var(--gilt);color:var(--lea);font-weight:800;animation:pulse 1.3s infinite}
+.set h2{font:700 30px Cinzel,serif;color:var(--wine)}
+.set h3{font-size:15px;font-weight:800;color:var(--gold3);margin:22px 0 10px}
+.trow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.trow input{flex:1;min-height:46px;padding:8px 14px;border-radius:13px;border:1px solid #dac7a1;background:#fffdf7;color:var(--ink);font:600 16px "Plus Jakarta Sans",sans-serif}
+.tsc{font:700 15px Cinzel,serif;color:var(--gold3);white-space:nowrap;min-width:4.5em;text-align:right}
+.x{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:13px;cursor:pointer;color:var(--bad);background:#fff;border:1px solid #e8d4cc}
+.orow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid #efe3ca}
+.orow label{font-weight:700}.orow small{display:block;font-weight:500;color:var(--mute);font-size:13.5px}
+.sw{appearance:none;-webkit-appearance:none;flex:none;width:54px;height:31px;margin:0;border-radius:999px;cursor:pointer;position:relative;background:#d8cbb0;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.sw:checked{background:var(--ok)}.sw:checked::after{transform:translateX(23px)}
+select{min-height:44px;padding:6px 12px;border-radius:12px;border:1px solid #dac7a1;background:#fffdf7;color:var(--ink);font:700 15px "Plus Jakarta Sans",sans-serif}
+
+/* Podium */
+.end{text-align:center}
+.trophy{width:88px;height:88px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;background:var(--gilt);color:var(--lea);box-shadow:0 14px 30px -12px rgba(150,100,20,.9),inset 0 1px 0 rgba(255,255,255,.6);animation:pop .6s ease}
+.trophy .ic{width:46px;height:46px}
+.end h2{font:700 clamp(28px,4vw,44px) Cinzel,serif;color:var(--wine)}
+.sub{color:var(--mute);font-weight:600;margin:8px 0 26px}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:12px;max-width:580px;margin:0 auto 18px}
+.pd{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;animation:rise .7s ease both}
+.pd.p1{animation-delay:.35s}.pd.p3{animation-delay:.15s}
+.pd .av{width:54px;height:54px;font-size:22px}
+.pd b{font-weight:800;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pts{font:700 18px Cinzel,serif;color:var(--gold3)}
+.base{width:100%;display:grid;place-items:center;border-radius:15px 15px 5px 5px;font:700 36px Cinzel,serif;background:linear-gradient(160deg,#6c2035,#43101e);box-shadow:inset 0 0 0 1px rgba(212,162,76,.5)}
+.p1 .base{height:150px}.p2 .base{height:110px}.p3 .base{height:80px}
+.solo{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:10px}
+.solo .av{width:60px;height:60px;font-size:26px}
+.solo .big{font:700 52px Cinzel,serif}
+.rest{list-style:none;padding:0;margin:0 auto 10px;max-width:380px;text-align:left}
+.rest li{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid #efe3ca;font-weight:700}
+
+.foot{color:#cdb595;font-size:14px;text-align:center;margin:22px 0 0}
+.toast{position:fixed;left:50%;top:16px;z-index:30;display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;background:var(--gilt);color:var(--lea);font-weight:800;box-shadow:0 16px 30px -12px rgba(0,0,0,.7);transform:translate(-50%,-160%);opacity:0;visibility:hidden;transition:transform .45s cubic-bezier(.2,1.4,.4,1),opacity .3s,visibility .45s;pointer-events:none}
+.toast .ic{width:14px;height:14px;fill:currentColor}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition:transform .45s cubic-bezier(.2,1.4,.4,1),opacity .2s}
+.float{position:fixed;z-index:31;pointer-events:none;font:700 26px Cinzel,serif;color:var(--gold2);text-shadow:0 2px 8px rgba(0,0,0,.6);animation:floatUp 1.25s ease forwards}
+.float.neg{color:#ffa595}
+#cf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+@keyframes pop{from{opacity:0;transform:scale(.93)}}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes pulse{50%{opacity:.55}}
+@keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(-52px)}}
+@media(max-width:600px){.brand small{display:none}.brand b{font-size:19px}.logo{width:40px;height:40px}.logo .ic{width:22px;height:22px}.ib{width:40px;height:40px}.hd{padding-top:12px;gap:10px}.teams{gap:6px;margin:2px 0 12px}.tm{min-height:44px;padding:5px 10px 5px 5px;gap:7px}.av{width:30px;height:30px;font-size:14px}.sc{font-size:18px}.tn{max-width:7em;font-size:14.5px}.tm.add span{display:none}.tm.add{padding:5px 12px}.card{padding:20px 16px;border-radius:20px}.q{margin-bottom:18px}.ring{width:54px;height:54px}.gtop{margin-bottom:14px}.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-radius:18px}.tabs a{flex-direction:column;gap:3px;padding:8px 2px;font-size:11.5px;border-radius:13px;text-align:center;white-space:normal;line-height:1.15}.teams{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:3px}.tm{flex:none}.tm .tt{display:none}.stmt{padding:44px 18px 20px}.stmt::before{left:14px;top:2px;font-size:58px}.vbtn{min-height:72px;font-size:21px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M2.5 5.5c3-1.6 6.3-1.6 9.5.8 3.2-2.4 6.5-2.4 9.5-.8v13.5c-3-1.4-6.3-1.4-9.5.9-3.2-2.3-6.5-2.3-9.5-.9z"/><path d="M12 6.3v13.6"/></symbol>
+<symbol id="i-quiz" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.4a2.6 2.6 0 1 1 3.7 2.4c-.7.3-1.2 1-1.2 1.8v.6"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></symbol>
+<symbol id="i-who" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M8 21h8M4 7h16M4 7l-3 7h6zM20 7l-3 7h6z"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+<symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5v5h4l5 4v-13l-5 4z"/><path d="M16.5 9a4.5 4.5 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/></symbol>
+<symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5v5h4l5 4v-13l-5 4z"/><path d="M17 9.5l5 5M22 9.5l-5 5"/></symbol>
+<symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+<symbol id="i-half" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17z" fill="currentColor"/></symbol>
+<symbol id="i-hour" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7.5 3v2.5a4.5 4.5 0 0 0 9 0V3M7.5 21v-2.5a4.5 4.5 0 0 1 9 0V21M12 10v4"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7.5 4h9v5a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6H4.5a3 3 0 0 0 3.2 4M16.5 6h3a3 3 0 0 1-3.2 4M12 13.5V17M8.5 21h7M9.5 17h5v4h-5z"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.8 10.6c.6.5.8 1.2.8 2V16h6v-.4c0-.8.2-1.5.8-2A6 6 0 0 0 12 3z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.5 5v14M15.5 5v14"/></symbol>
+<symbol id="i-restart" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5M3.5 3.5v5h5"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.2l2.7 5.5 6 .9-4.35 4.25 1 6L12 17l-5.35 2.85 1-6L3.3 9.6l6-.9z"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 21a6 6 0 0 0 6-6c0-4-3-6-4.5-10-1 2.5-2 3.5-3.5 4.5C8.3 10.6 6 12.4 6 15a6 6 0 0 0 6 6z"/><path d="M12 21a2.5 2.5 0 0 1-2.5-2.5c0-1.6 1.2-2.3 2.5-4 1.3 1.7 2.5 2.4 2.5 4A2.5 2.5 0 0 1 12 21z"/></symbol>
+<symbol id="i-scroll" viewBox="0 0 24 24"><path d="M8 4h10a2 2 0 0 1 2 2v1h-4M8 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8.5a2 2 0 0 0 2-2V7M8 4a2 2 0 0 1 2 2v14M12.5 10h3.5M12.5 14h3.5"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.4L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.6z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+<symbol id="i-seed" viewBox="0 0 24 24"><path d="M5 19C5 11 11 5 19.5 4.5 19 13 13 19 5 19z"/><path d="M5 19l8-8"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.2a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.6"/></symbol>
+<symbol id="i-crown" viewBox="0 0 24 24"><path d="M3.5 8l4.3 4 4.2-7 4.2 7 4.3-4-1.8 11H5.3z"/><path d="M6 21h12"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.3c2.1.7 3.5 2.6 3.5 5.7"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+</svg>
+
+<header class="hd">
+  <a class="brand" href="#accueil"><span class="logo"><svg class="ic"><use href="#i-book"/></svg></span><span><b>Jeux bibliques</b><small>Quiz, énigmes et défis pour l'enseignement</small></span></a>
+  <nav class="tabs" aria-label="Jeux">
+    <a href="#quiz"><svg class="ic"><use href="#i-quiz"/></svg>Quiz</a>
+    <a href="#qui"><svg class="ic"><use href="#i-who"/></svg>Qui suis-je ?</a>
+    <a href="#vrai-faux"><svg class="ic"><use href="#i-scale"/></svg>Vrai ou faux</a>
+    <a href="#jeopardy"><svg class="ic"><use href="#i-grid"/></svg>Jeopardy</a>
+  </nav>
+  <div class="tools">
+    <button class="ib" data-act="sound" id="sbtn" aria-label="Activer ou couper le son"></button>
+    <button class="ib" data-act="settings" aria-label="Réglages"><svg class="ic"><use href="#i-sliders"/></svg></button>
+  </div>
+</header>
+<main>
+  <div class="teams" id="teams" aria-label="Équipes et scores"></div>
+  <section id="view" class="card" aria-live="polite"></section>
+  <p class="foot">Références selon la Bible Segond.</p>
+</main>
+<div class="ov" id="ov" hidden><div class="card modal" id="modal" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" role="status"></div>
+<canvas id="cf"></canvas>
+
+<script>
+{
+/* ================= Contenu ================= */
+const QZ={
+facile:{pts:10,list:[
+["Qui a construit l'arche ?",["Noé","Moïse","Abraham","David"],"Genèse 6"],
+["En combien de jours Dieu a-t-il créé le monde avant de se reposer ?",["6","7","3","40"],"Genèse 1–2"],
+["Dans quelle ville Jésus est-il né ?",["Bethléem","Nazareth","Jérusalem","Capernaüm"],"Matthieu 2:1"],
+["Qui a vaincu le géant Goliath ?",["David","Saül","Samson","Josué"],"1 Samuel 17"],
+["Combien d'apôtres Jésus a-t-il choisis ?",["12","7","10","70"],"Luc 6:13"],
+["Qui a été avalé par un grand poisson ?",["Jonas","Pierre","Élie","Jérémie"],"Jonas 2:1"],
+["Comment s'appelait le premier homme ?",["Adam","Abel","Seth","Hénoc"],"Genèse 2"],
+["Qui a reçu les Dix Commandements sur le mont Sinaï ?",["Moïse","Aaron","Josué","Abraham"],"Exode 20"],
+["Quelle mer Dieu a-t-il ouverte devant Israël ?",["La mer Rouge","La mer Morte","La mer de Galilée","La Méditerranée"],"Exode 14"],
+["Qui a trahi Jésus ?",["Judas Iscariote","Pierre","Thomas","Barabbas"],"Matthieu 26:14-16"]]},
+moyen:{pts:20,list:[
+["Combien de livres compte la Bible protestante ?",["66","73","39","27"],"39 livres dans l'Ancien Testament + 27 dans le Nouveau"],
+["Quel est le premier miracle de Jésus selon l'Évangile de Jean ?",["L'eau changée en vin","La multiplication des pains","La guérison d'un aveugle","La marche sur l'eau"],"Jean 2:11"],
+["Qui a été jeté dans la fosse aux lions ?",["Daniel","Joseph","Jérémie","Ézéchiel"],"Daniel 6"],
+["Quel livre de la Bible compte le plus de chapitres ?",["Les Psaumes","Ésaïe","Genèse","Jérémie"],"150 psaumes"],
+["Quel roi a demandé la sagesse à Dieu ?",["Salomon","David","Ézéchias","Josias"],"1 Rois 3"],
+["Quel disciple a renié Jésus trois fois ?",["Pierre","Jean","Jacques","André"],"Luc 22:54-62"],
+["Combien de jours Jésus a-t-il jeûné dans le désert ?",["40","7","3","12"],"Matthieu 4:2"],
+["Qui a succédé à Moïse pour conduire Israël ?",["Josué","Caleb","Aaron","Gédéon"],"Josué 1"],
+["Sur le chemin de quelle ville Saul (Paul) s'est-il converti ?",["Damas","Jérusalem","Antioche","Rome"],"Actes 9"],
+["Qui était la mère du prophète Samuel ?",["Anne","Sara","Rachel","Élisabeth"],"1 Samuel 1"]]},
+difficile:{pts:30,list:[
+["Quel est le plus court livre de l'Ancien Testament ?",["Abdias","Aggée","Nahum","Ruth"],"Abdias : un seul chapitre de 21 versets"],
+["Qui fut le premier martyr chrétien ?",["Étienne","Jacques","Pierre","Philippe"],"Actes 7"],
+["Qui est l'homme le plus âgé de la Bible ?",["Mathusalem","Noé","Adam","Hénoc"],"969 ans, Genèse 5:27"],
+["Quel prophète a vu la vallée des ossements desséchés ?",["Ézéchiel","Ésaïe","Daniel","Amos"],"Ézéchiel 37"],
+["Qui était le père de Jean-Baptiste ?",["Zacharie","Joseph","Siméon","Zébédée"],"Luc 1"],
+["Quelle reine juive a sauvé son peuple en Perse ?",["Esther","Vasthi","Jézabel","Michal"],"Livre d'Esther"],
+["Combien de personnes étaient dans l'arche de Noé ?",["8","2","4","12"],"1 Pierre 3:20"],
+["Dans quelle langue la majeure partie de l'Ancien Testament a-t-elle été écrite ?",["L'hébreu","L'araméen","Le grec","Le latin"],"Quelques passages sont en araméen (Daniel, Esdras)"],
+["Quel juge a vaincu Madian avec seulement 300 hommes ?",["Gédéon","Samson","Jephté","Barak"],"Juges 7"],
+["Quel apôtre était aussi appelé Didyme ?",["Thomas","Barthélemy","Matthieu","Thaddée"],"Jean 11:16"]]}};
+
+const WHO=[
+{n:"Joseph",r:"Genèse 37–50",c:["J'ai passé du temps en prison alors que j'étais innocent.","Je savais interpréter les rêves.","Mes frères m'ont vendu comme esclave.","Je suis devenu gouverneur de l'Égypte.","Mon père Jacob m'avait offert une tunique de plusieurs couleurs."]},
+{n:"Moïse",r:"Exode 2–14",c:["J'ai grandi dans un palais qui n'était pas celui de mon peuple.","J'ai gardé des moutons au désert pendant des années.","Dieu m'a parlé depuis un buisson qui brûlait sans se consumer.","Bébé, on m'a trouvé dans une corbeille sur le Nil.","J'ai conduit Israël hors d'Égypte."]},
+{n:"Ruth",r:"Livre de Ruth",c:["Je n'étais pas israélite : je venais de Moab.","Je suis devenue veuve jeune.","J'ai ramassé des épis dans le champ d'un homme riche.","J'ai dit : « Ton peuple sera mon peuple, et ton Dieu sera mon Dieu. »","Ma belle-mère s'appelait Naomi, et je suis l'arrière-grand-mère du roi David."]},
+{n:"Élie",r:"1 Rois 17 – 2 Rois 2",c:["J'étais prophète au temps du roi Achab.","Des corbeaux m'ont nourri.","J'ai affronté 450 prophètes de Baal sur le mont Carmel.","Le feu est descendu du ciel sur mon sacrifice.","J'ai été enlevé au ciel dans un tourbillon, avec un char de feu, et Élisée m'a succédé."]},
+{n:"Zachée",r:"Luc 19:1-10",c:["Je vivais à Jéricho.","J'étais riche.","J'étais chef des collecteurs d'impôts.","J'étais de petite taille.","Je suis monté sur un sycomore pour voir passer Jésus."]},
+{n:"Pierre",r:"Évangiles et Actes",c:["J'étais pêcheur.","J'ai marché sur l'eau, puis j'ai eu peur.","Jésus m'a donné un nouveau nom.","J'ai renié Jésus trois fois avant que le coq chante.","Mon frère s'appelait André, et on m'appelait aussi Simon."]},
+{n:"Daniel",r:"Livre de Daniel",c:["J'ai été emmené en exil à Babylone quand j'étais jeune.","J'ai refusé de manger les mets du roi.","J'ai interprété les rêves de Nebucadnetsar.","J'ai lu l'écriture mystérieuse sur le mur du palais de Belschatsar.","On m'a jeté dans la fosse aux lions parce que je priais."]},
+{n:"Esther",r:"Livre d'Esther",c:["J'étais orpheline, élevée par mon cousin.","Je vivais en Perse.","J'ai été choisie parmi de nombreuses jeunes filles pour devenir reine.","Mon cousin Mardochée m'a dit : « Qui sait si ce n'est pas pour un temps comme celui-ci ? »","J'ai déjoué le complot d'Haman contre les Juifs."]},
+{n:"Paul",r:"Actes 9–28 et ses lettres",c:["J'étais citoyen romain, né à Tarse.","Je fabriquais des tentes pour gagner ma vie.","J'ai fait naufrage près de l'île de Malte.","J'ai écrit de nombreuses lettres aux Églises.","J'ai persécuté les chrétiens avant de rencontrer Jésus sur le chemin de Damas."]},
+{n:"Noé",r:"Genèse 6–9",c:["J'étais un homme juste au milieu d'une génération corrompue.","J'ai construit quelque chose d'immense sur ordre de Dieu.","J'avais trois fils : Sem, Cham et Japhet.","J'ai envoyé un corbeau, puis une colombe.","Dieu a placé un arc-en-ciel comme signe de son alliance avec moi."]}];
+const POOL=["Abraham","Isaac","Jacob","Samson","Gédéon","Salomon","Élisée","Josué","Jérémie","Ésaïe","Débora","Sara","Rebecca","Rachel","Marie","Jean-Baptiste","Barnabas","Timothée","Lydie","Néhémie"];
+
+const VF=[
+["Ève a mangé une pomme.",0,"La Bible parle seulement du « fruit de l'arbre de la connaissance du bien et du mal », sans dire lequel. La pomme vient de la tradition latine (malum veut dire à la fois « mal » et « pomme »).","Genèse 3:6"],
+["La Bible dit qu'il y avait trois rois mages.",0,"Matthieu parle de « mages venus d'Orient », sans donner leur nombre ni dire qu'ils étaient rois. Le chiffre trois vient des trois cadeaux : or, encens et myrrhe.","Matthieu 2:1-11"],
+["Jonas a été avalé par une baleine.",0,"Le texte dit « un grand poisson », sans préciser l'espèce.","Jonas 2:1"],
+["Noé a fait entrer tous les animaux uniquement deux par deux.",0,"Dieu demande sept couples des animaux purs et des oiseaux, et un couple des autres.","Genèse 7:2-3"],
+["Moïse est entré dans la Terre promise.",0,"Il l'a vue depuis le mont Nebo, mais n'y est pas entré.","Deutéronome 34:4"],
+["« Aide-toi, le ciel t'aidera » est un verset biblique.",0,"C'est un proverbe popularisé par La Fontaine, pas un texte de la Bible.",""],
+["Jésus a été baptisé par Jean-Baptiste dans le Jourdain.",1,"Jean hésite d'abord : « C'est moi qui ai besoin d'être baptisé par toi », puis accepte.","Matthieu 3:13-17"],
+["Le livre des Psaumes contient 150 psaumes.",1,"C'est le livre de la Bible qui compte le plus de chapitres.","Psaumes"],
+["David a été le premier roi d'Israël.",0,"Le premier roi fut Saül. David lui a succédé.","1 Samuel 10"],
+["Selon les Évangiles, Marie de Magdala était une prostituée.",0,"Les Évangiles disent que Jésus l'a délivrée de sept démons. L'idée qu'elle était prostituée vient d'une prédication du pape Grégoire le Grand, en 591.","Luc 8:2"],
+["Le Nouveau Testament a été écrit principalement en grec.",1,"Il a été écrit en grec courant (koinè).",""],
+["Abraham s'appelait d'abord Abram.",1,"Dieu a changé son nom en Abraham, « père d'une multitude ».","Genèse 17:5"],
+["La Bible indique que Jésus est né un 25 décembre.",0,"Aucune date de naissance n'est donnée. Le 25 décembre est une date fixée plus tard par l'Église.","Luc 2"],
+["Paul faisait partie des douze apôtres choisis par Jésus pendant son ministère.",0,"Paul a été appelé après la résurrection, sur le chemin de Damas.","Actes 9"],
+["Dans la Genèse, le serpent du jardin d'Éden est appelé Satan.",0,"La Genèse dit seulement « le serpent ». Le lien avec Satan est fait bien plus tard, dans l'Apocalypse.","Genèse 3:1 ; Apocalypse 12:9"],
+["Lazare était dans le tombeau depuis quatre jours quand Jésus l'a ressuscité.",1,"Marthe dit même qu'il « sent déjà ».","Jean 11:17, 39"]];
+
+const JEO={cats:["Prophètes","Miracles","Paraboles","Géographie","Femmes de la Bible"],ic:["scroll","spark","seed","pin","crown"],q:[
+[["Ce prophète a été avalé par un grand poisson.","Jonas","Jonas 2",["Élie","Amos","Osée"]],["Ce prophète a été enlevé au ciel avec un char de feu.","Élie","2 Rois 2:11",["Élisée","Hénoc","Samuel"]],["Ce prophète a oint Saül, puis David.","Samuel","1 Samuel 10 et 16",["Nathan","Élie","Gad"]],["Il a annoncé : « La jeune femme deviendra enceinte… et lui donnera le nom d'Emmanuel. »","Ésaïe","Ésaïe 7:14",["Jérémie","Michée","Malachie"]],["La tradition lui attribue le livre des Lamentations.","Jérémie","Lamentations",["Ézéchiel","Daniel","Habacuc"]]],
+[["Avec 5 pains, combien de poissons Jésus a-t-il nourri la foule ?","2","Matthieu 14:17",["5","3","7"]],["Dans cette ville, l'eau a été changée en vin.","Cana","Jean 2",["Capernaüm","Naïn","Béthanie"]],["Cet aveugle de Jéricho criait : « Fils de David, aie pitié de moi ! »","Bartimée","Marc 10:46-52",["Lazare","Zachée","Malchus"]],["Un mort est revenu à la vie en touchant les os de ce prophète.","Élisée","2 Rois 13:21",["Élie","Samuel","Moïse"]],["Jésus a ressuscité la fille de ce chef de synagogue.","Jaïrus","Marc 5:22-43",["Nicodème","Corneille","Zacharie"]]],
+[["Un fils dilapide son héritage, puis revient chez son père.","Le fils prodigue","Luc 15:11-32",["Le bon Samaritain","Les talents","Le semeur"]],["Le berger laisse 99 brebis pour en chercher une.","La brebis perdue","Luc 15:4-7",["La drachme perdue","Le semeur","Les talents"]],["Il s'arrête pour soigner un homme blessé sur la route de Jéricho.","Le bon Samaritain","Luc 10:30-37",["Le pharisien et le publicain","Le riche insensé","Le fils prodigue"]],["La plus petite des semences devient un grand arbre.","Le grain de moutarde","Matthieu 13:31-32",["Le levain","Le semeur","Le trésor caché"]],["Dans la parabole des dix vierges, combien étaient sages ?","5","Matthieu 25:1-13",["10","3","7"]]],
+[["Le fleuve où Jésus a été baptisé.","Le Jourdain","Matthieu 3:13",["Le Nil","L'Euphrate","Le Tigre"]],["La ville dont les murailles sont tombées.","Jéricho","Josué 6",["Jérusalem","Aï","Babylone"]],["La montagne où Moïse a reçu la Loi.","Le Sinaï","Exode 19–20",["Le Carmel","Le mont des Oliviers","Le Thabor"]],["Le jardin où Jésus a prié avant son arrestation.","Gethsémané","Matthieu 26:36",["Éden","Béthanie","Emmaüs"]],["L'île où Jean a reçu les visions de l'Apocalypse.","Patmos","Apocalypse 1:9",["Malte","Chypre","Crète"]]],
+[["La mère de Jésus.","Marie","Luc 1",["Élisabeth","Marthe","Anne"]],["Femme d'Abraham, elle a eu un fils à 90 ans.","Sara","Genèse 17:17 ; 21",["Rebecca","Agar","Rachel"]],["Prophétesse et juge, elle siégeait sous un palmier.","Débora","Juges 4:4-5",["Jaël","Miriam","Anne"]],["Sœur de Marthe, elle s'est assise aux pieds de Jésus pour l'écouter.","Marie de Béthanie","Luc 10:38-42",["Marie de Magdala","Salomé","Jeanne"]],["Marchande de pourpre de Thyatire, convertie à Philippes.","Lydie","Actes 16:14",["Priscille","Dorcas","Phœbé"]]]]};
+
+const GAMES=[
+{id:"quiz",ic:"quiz",t:"Quiz par niveaux",d:"30 questions en trois niveaux, avec jokers 50/50 et +10 s.",m:"Facile · Moyen · Difficile"},
+{id:"qui",ic:"who",t:"Qui suis-je ?",d:"10 personnages. Un indice se dévoile toutes les 12 secondes et la valeur baisse.",m:"De 50 à 10 points"},
+{id:"vrai-faux",ic:"scale",t:"Vrai ou faux",d:"16 idées reçues, chacune avec son explication et sa référence.",m:"Bonus de série dès 3 bonnes réponses"},
+{id:"jeopardy",ic:"grid",t:"Jeopardy",d:"5 catégories, 25 cases de 100 à 500 points et une double mise cachée.",m:"Points perdus en cas d'erreur"}];
+
+/* ================= Outils ================= */
+const $=s=>document.querySelector(s),view=$("#view");
+const COL=["#e3b75a","#6fb3a8","#d27a8f","#a08fe2","#8cbf6a","#ea915f"];
+const VAL=[100,200,300,400,500],WP=[50,40,30,20,10],CLUE=12,VFT=15,KM={a:0,b:1,c:2,d:3,"1":0,"2":1,"3":2,"4":3};
+const LV={facile:1,moyen:2,difficile:3};
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+const ic=(n,c)=>`<svg class="ic ${c||""}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const pl=(n,w)=>n>1?w+"s":w;
+const ini=n=>{const w=String(n).trim().split(/\s+/);const x=w.length>1&&/^[ée]quipe$/i.test(w[0])?w[w.length-1]:w[0];return (x[0]||"?").toUpperCase()};
+
+let S={auto:true,sound:true,bonus:true,dur:20,delay:5};
+let T={teams:[{n:"Équipe A",s:0},{n:"Équipe B",s:0}],cur:0};
+try{const s=JSON.parse(localStorage.getItem("jb-set"));if(s)S={...S,...s}}catch(e){}
+try{const t=JSON.parse(localStorage.getItem("jb-teams"));if(t&&t.teams&&t.teams.length)T=t;if(T.cur>=T.teams.length)T.cur=0}catch(e){}
+const save=()=>{try{localStorage.setItem("jb-teams",JSON.stringify(T))}catch(e){}};
+const saveS=()=>{try{localStorage.setItem("jb-set",JSON.stringify(S))}catch(e){}};
+const tname=()=>esc(T.teams[T.cur].n);
+
+/* Son */
+let AC=null;
+function tone(f,d,type,v,t0){if(!S.sound)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();const t=AC.currentTime+(t0||0),o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v||.12,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+const sfx={ok(){tone(659,.18,"sine",.14);tone(988,.3,"sine",.12,.1);tone(1319,.45,"triangle",.06,.2)},
+ko(){tone(196,.3,"sawtooth",.05);tone(147,.45,"sawtooth",.05,.13)},
+tick(){tone(1250,.05,"square",.02)},
+reveal(){tone(523,.14,"triangle",.07);tone(784,.2,"triangle",.05,.08)},
+click(){tone(880,.04,"triangle",.035)},
+win(){[523,659,784,1047].forEach((f,i)=>tone(f,.4,"triangle",.09,i*.13));tone(1047,1,"sine",.07,.55)},
+dbl(){[784,988,1175,1568].forEach((f,i)=>tone(f,.22,"square",.035,i*.08))}};
+
+/* Chronomètre */
+let TM=null;
+function runTimer(dur,onEnd){stopTimer();TM={dur,left:dur,onEnd,last:performance.now(),sec:Math.ceil(dur),paused:false};updRing();
+  TM.id=setInterval(()=>{if(!TM)return;const now=performance.now(),dt=(now-TM.last)/1000;TM.last=now;if(TM.paused)return;TM.left-=dt;
+    if(TM.left<=0){TM.left=0;updRing();const f=TM.onEnd;stopTimer();f();return}
+    const s=Math.ceil(TM.left);if(s!==TM.sec){TM.sec=s;if(s<=5)sfx.tick()}updRing()},100)}
+function stopTimer(){if(TM)clearInterval(TM.id);TM=null}
+function updRing(){if(!TM)return;const f=$("#rf"),s=$("#rs"),r=$("#ring");if(!f)return;f.style.strokeDashoffset=100*(1-TM.left/TM.dur);s.textContent=Math.ceil(TM.left);r.classList.toggle("low",TM.left<=5)}
+const ring=()=>`<div class="ring" id="ring" aria-label="Temps restant"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" class="rt"/><circle cx="22" cy="22" r="19" class="rf" id="rf" pathLength="100" style="stroke-dashoffset:0"/></svg><b id="rs"></b></div>`;
+
+/* Enchaînement */
+let NXfn=null,NXid=0;
+function armNext(fn){NXfn=fn;clearTimeout(NXid);const b=$("#next");if(!b)return;if(S.auto){b.classList.add("auto");b.style.setProperty("--d",S.delay+"s");NXid=setTimeout(goNext,S.delay*1000)}b.focus({preventScroll:true});
+  const box=b.closest(".nx");if(box&&box.getBoundingClientRect().bottom>innerHeight)box.scrollIntoView({block:"end",behavior:"smooth"})}
+function goNext(){clearTimeout(NXid);const f=NXfn;NXfn=null;if(f){sfx.click();f()}}
+function pauseAuto(){clearTimeout(NXid);const b=$("#next");if(b)b.classList.remove("auto");const p=$("#pause");if(p)p.remove()}
+function cancelAll(){stopTimer();clearTimeout(NXid);NXfn=null}
+const nextBar=l=>`<div class="nx"><button class="btn gold next" id="next"><span>${l}</span>${ic("arrow")}</button>${S.auto?`<button class="btn ghost sm" id="pause">${ic("pause")}<span>Pause</span></button>`:""}</div>`;
+const btn=(a,i,l,c)=>`<button class="btn ${c||"gold"}" data-act="${a}">${ic(i)}<span>${l}</span></button>`;
+const fbHTML=(ok,title,body,ref)=>`<div class="fb ${ok?"ok":"ko"}"><span class="fi">${ic(ok?"check":"x")}</span><div><b>${title}</b><p>${body}</p>${ref?`<span class="ref">${ic("book")}${esc(ref)}</span>`:""}</div></div>`;
+const dots=(n,i)=>`<div class="dots">${Array.from({length:n},(_,k)=>`<i class="${k<i?"d":k===i?"c":""}"></i>`).join("")}</div><span class="cnt">${i+1} / ${n}</span>`;
+const optHTML=(x,k,a)=>`<button class="opt" data-${a}="${k}"><span class="lt">${"ABCD"[k]}</span><span class="ot">${esc(x)}</span><span class="st"></span></button>`;
+function markOpts(scope,a,opts,ans,k){scope.querySelectorAll(`.opt[data-${a}]`).forEach(b=>{const i=+b.dataset[a];b.disabled=true;
+  if(opts[i]===ans){b.classList.add("ok");b.querySelector(".st").innerHTML=ic("check")}
+  else if(i===k){b.classList.add("ko","shk");b.querySelector(".st").innerHTML=ic("x")}else b.classList.add("dim")})}
+
+/* Équipes */
+function renderTeams(){$("#teams").innerHTML=T.teams.map((t,i)=>`<button class="tm ${i===T.cur?"on":""}" data-t="${i}" style="--c:${COL[i]}" aria-pressed="${i===T.cur}"><span class="av">${esc(ini(t.n))}</span><span class="tn">${esc(t.n)}</span><b class="sc" id="sc${i}">${t.s}</b>${i===T.cur&&T.teams.length>1?`<span class="tt">${ic("play")}À vous</span>`:""}</button>`).join("")+`<button class="tm add" data-act="settings">${ic("users")}<span>Équipes</span></button>`;save()}
+function setActive(i){T.cur=i;renderTeams();if(route==="quiz"&&Q.list.length&&!Q.done)drawJokers();if(route==="qui"&&W.list&&!W.done){const w=$("#wt");if(w)w.textContent="points pour "+T.teams[T.cur].n}}
+function countTo(el,a,b){const t0=performance.now(),f=now=>{const k=Math.min(1,(now-t0)/650);el.textContent=Math.round(a+(b-a)*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+function award(p){if(!p)return;const i=T.cur,old=T.teams[i].s;T.teams[i].s+=p;save();const el=$("#sc"+i);if(!el)return;countTo(el,old,T.teams[i].s);
+  const r=el.getBoundingClientRect(),f=document.createElement("span");f.className="float"+(p<0?" neg":"");f.textContent=(p>0?"+":"−")+Math.abs(p);f.style.left=r.left+"px";f.style.top=(r.top-6)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1300)}
+function nextTeam(){if(T.teams.length<2)return;T.cur=(T.cur+1)%T.teams.length;renderTeams();toast(`${ic("play")}Au tour de ${tname()}`)}
+function toast(h){const t=$("#toast");t.innerHTML=h;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),1700)}
+
+/* Confettis et podium */
+let CF=0;
+function confetti(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;const c=$("#cf"),x=c.getContext("2d"),d=devicePixelRatio||1,W2=c.width=innerWidth*d,H=c.height=innerHeight*d,cols=["#f4dc95","#d4a24c","#fbf6ea","#c0607a","#9c6d26"];
+  const P=Array.from({length:170},()=>({x:Math.random()*W2,y:-Math.random()*H*.6,w:(6+Math.random()*7)*d,h:(9+Math.random()*9)*d,vx:(Math.random()-.5)*3*d,vy:(2+Math.random()*4)*d,r:Math.random()*6,vr:(Math.random()-.5)*.25,c:cols[Math.random()*cols.length|0]}));
+  const t0=performance.now();cancelAnimationFrame(CF);const f=now=>{const el=now-t0;x.clearRect(0,0,W2,H);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.035*d;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.globalAlpha=Math.max(0,1-el/4300);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.cos(p.r*2)));x.restore()});if(el<4300)CF=requestAnimationFrame(f);else x.clearRect(0,0,W2,H)};CF=requestAnimationFrame(f)}
+function podium(title,sub,acts){cancelAll();const rk=T.teams.map((t,i)=>({n:t.n,s:t.s,i})).sort((a,b)=>b.s-a.s);let body;
+  if(rk.length===1)body=`<div class="solo"><span class="av" style="--c:${COL[rk[0].i]}">${esc(ini(rk[0].n))}</span><b>${esc(rk[0].n)}</b><span class="big gilt">${rk[0].s} pts</span></div>`;
+  else{const order=[rk[1],rk[0],rk[2]].filter(Boolean);body=`<div class="podium">${order.map(t=>{const r=rk.indexOf(t)+1;return `<div class="pd p${r}" style="--c:${COL[t.i]}"><span class="av">${esc(ini(t.n))}</span><b>${esc(t.n)}</b><span class="pts">${t.s} pts</span><div class="base"><span class="gilt">${r}</span></div></div>`}).join("")}</div>${rk.length>3?`<ol class="rest">${rk.slice(3).map((t,k)=>`<li><span>${k+4}. ${esc(t.n)}</span><span>${t.s} pts</span></li>`).join("")}</ol>`:""}`}
+  view.className="card";view.innerHTML=`<div class="end"><div class="trophy">${ic("trophy")}</div><h2>${title}</h2><p class="sub">${sub}</p>${body}<div class="row c">${acts}</div></div>`;sfx.win();confetti();window.scrollTo({top:0,behavior:"smooth"})}
+
+/* ================= Accueil ================= */
+function home(){view.innerHTML=`<section class="hero"><h2 class="gilt">Apprendre la Bible en jouant</h2><p>Le chronomètre, le score et les tours d'équipe se gèrent seuls. Choisissez un jeu et répondez.</p></section>
+<div class="tiles">${GAMES.map(g=>`<a class="tile" href="#${g.id}"><span class="tic">${ic(g.ic)}</span><h3>${g.t}</h3><p>${g.d}</p><span class="meta">${g.m}</span><span class="go">Jouer ${ic("arrow")}</span></a>`).join("")}</div>
+<div class="how"><span><i>1</i>Nommez vos équipes dans les réglages</span><span><i>2</i>Choisissez un jeu</span><span><i>3</i>Répondez à la souris ou au clavier</span></div>`}
+
+/* ================= Quiz ================= */
+let Q={list:[]};
+function quizHome(){Q={list:[]};view.innerHTML=`<div class="gh"><h2>Quiz par niveaux</h2><p>Dix questions par niveau. Le chronomètre démarre seul, la bonne réponse s'affiche, puis la question suivante arrive. Chaque équipe a un joker 50/50 et un joker +10 s par partie.</p></div>
+<div class="levels">${Object.entries(QZ).map(([k,v])=>`<button class="lvl" data-lvl="${k}"><span class="stars">${[1,2,3].map(n=>ic("star",n<=LV[k]?"fill":"")).join("")}</span><h3>${cap(k)}</h3><p>${v.list.length} questions · ${v.pts} pts chacune</p><span class="go">Commencer ${ic("arrow")}</span></button>`).join("")}</div>`}
+function quizStart(l){Q={lvl:l,pts:QZ[l].pts,list:shuf(QZ[l].list),i:0,jok:{},good:0};quizQ()}
+function quizQ(){const [q,o]=Q.list[Q.i];Q.opts=shuf(o);Q.ans=o[0];Q.done=false;
+  view.innerHTML=`<div class="gtop"><div class="crumb">${ic("quiz")}Quiz · ${cap(Q.lvl)}</div><div class="prog">${dots(Q.list.length,Q.i)}</div>${ring()}</div>
+  <p class="q">${esc(q)}</p><div class="opts">${Q.opts.map((x,k)=>optHTML(x,k,"k")).join("")}</div><div class="jk" id="jk"></div><div id="fb"></div>`;
+  drawJokers();sfx.reveal();runTimer(S.dur,()=>quizAns(-1))}
+function drawJokers(){const el=$("#jk");if(!el)return;const j=Q.jok[T.cur]||(Q.jok[T.cur]={f:0,t:0});
+  el.innerHTML=`<span class="jl">Jokers de ${tname()}</span><button class="jbtn" id="j50" ${j.f||Q.done?"disabled":""}>${ic("half")}<span>50/50</span></button><button class="jbtn" id="jt" ${j.t||Q.done?"disabled":""}>${ic("hour")}<span>+10 s</span></button>`}
+function quizAns(k){if(Q.done)return;Q.done=true;const left=TM?TM.left:0;stopTimer();const ok=k>=0&&Q.opts[k]===Q.ans;markOpts(view,"k",Q.opts,Q.ans,k);
+  let p=0,bonus=0;if(ok){bonus=S.bonus?Math.round(Q.pts*.5*Math.min(1,left/S.dur)):0;p=Q.pts+bonus;Q.good++;award(p);sfx.ok()}else sfx.ko();drawJokers();
+  const last=Q.i>=Q.list.length-1,ref=Q.list[Q.i][2];
+  $("#fb").innerHTML=fbHTML(ok,ok?`Bonne réponse ! +${p} pts`:k<0?"Temps écoulé":"Mauvaise réponse",ok?(bonus?`Dont ${bonus} pts de bonus rapidité.`:`Réponse : ${esc(Q.ans)}.`):`La bonne réponse était : ${esc(Q.ans)}.`,ref)+nextBar(last?"Voir le podium":"Question suivante");
+  armNext(()=>{if(last)podium("Quiz terminé",`Niveau ${Q.lvl} · ${Q.good} ${pl(Q.good,"bonne")} ${pl(Q.good,"réponse")} sur ${Q.list.length}`,btn("quiz-again","restart","Rejouer ce niveau")+btn("quiz-home","quiz","Changer de niveau","ghost"));else{nextTeam();Q.i++;quizQ()}})}
+function joker50(){if(Q.done)return;const j=Q.jok[T.cur];if(!j||j.f)return;j.f=1;let n=0;shuf([0,1,2,3]).forEach(i=>{if(Q.opts[i]!==Q.ans&&n<2){const b=view.querySelector(`.opt[data-k="${i}"]`);b.classList.add("gone");b.disabled=true;n++}});sfx.reveal();drawJokers()}
+function jokerTime(){if(Q.done||!TM)return;const j=Q.jok[T.cur];if(!j||j.t)return;j.t=1;TM.left+=10;TM.dur=Math.max(TM.dur,TM.left);updRing();sfx.reveal();drawJokers()}
+
+/* ================= Qui suis-je ================= */
+let W={};
+function whoStart(){W={list:shuf(WHO),i:0,good:0};whoQ()}
+function whoQ(){const p=W.list[W.i];W.n=1;W.done=false;W.ok=false;W.win=0;W.wrong=new Set();W.last=-1;
+  const others=shuf([...new Set([...WHO.map(x=>x.n),...POOL])].filter(x=>x!==p.n));W.ch=shuf([p.n,...others.slice(0,3)]);sfx.reveal();whoDraw()}
+function whoDraw(){const p=W.list[W.i],len=W.list.length;
+  view.innerHTML=`<div class="gtop"><div class="crumb">${ic("who")}Qui suis-je ?</div><div class="prog">${dots(len,W.i)}</div>${W.done?"":ring()}</div>
+  <div class="who"><div class="clues">${p.c.map((c,i)=>i<W.n||W.done?`<div class="clue ${i===W.n-1&&!W.done?"new":""}"><span class="cn">${ic("bulb")}Indice ${i+1}</span><p>${esc(c)}</p></div>`:`<div class="clue lock"><span class="cn">${ic("lock")}Indice ${i+1} · ${WP[i]} pts</span><p>Se dévoile automatiquement</p></div>`).join("")}</div>
+  <div class="side"><div class="worth"><small>${W.done?"Résultat":"Valeur actuelle"}</small><b class="gilt">${W.done?W.win:WP[W.n-1]}</b><small id="wt">${W.done?(W.ok?"points gagnés":"aucun point"):"points pour "+tname()}</small></div>
+  <div class="opts one">${W.ch.map((x,k)=>{let c="",s="";if(W.done&&x===p.n){c="ok";s=ic("check")}else if(W.wrong.has(k)){c="ko"+(k===W.last?" shk":"");s=ic("x")}else if(W.done)c="dim";
+    return `<button class="opt ${c}" data-w="${k}" ${W.done||W.wrong.has(k)?"disabled":""}><span class="lt">${"ABCD"[k]}</span><span class="ot">${esc(x)}</span><span class="st">${s}</span></button>`}).join("")}</div></div></div>
+  <div id="fb">${W.done?fbHTML(W.ok,W.ok?`C'était ${esc(p.n)} ! +${W.win} pts`:`C'était ${esc(p.n)}`,W.ok?`Trouvé à l'indice ${W.n}.`:"Personne n'a trouvé cette fois.",p.r)+nextBar(W.i<len-1?"Personnage suivant":"Voir le podium"):""}</div>`;
+  W.last=-1;if(!W.done)runTimer(CLUE,whoNextClue)}
+function whoNextClue(){if(W.done)return;if(W.n<5){W.n++;sfx.reveal();whoDraw()}else whoEnd(false)}
+function whoPick(k){if(W.done||W.wrong.has(k))return;const p=W.list[W.i];
+  if(W.ch[k]===p.n){W.win=WP[W.n-1];W.good++;award(W.win);sfx.ok();whoEnd(true)}
+  else{W.wrong.add(k);W.last=k;sfx.ko();if(W.n<5){W.n++;whoDraw()}else whoEnd(false)}}
+function whoEnd(ok){W.done=true;W.ok=ok;stopTimer();whoDraw();
+  armNext(()=>{if(W.i<W.list.length-1){nextTeam();W.i++;whoQ()}else podium("Qui suis-je ? terminé",`${W.good} ${pl(W.good,"personnage")} ${pl(W.good,"trouvé")} sur ${W.list.length}`,btn("who-again","restart","Rejouer"))})}
+
+/* ================= Vrai ou faux ================= */
+let V={};
+function vfStart(){V={list:shuf(VF),i:0,good:0,st:{}};vfQ()}
+function vfQ(){const [s]=V.list[V.i],st=V.st[T.cur]||0;V.done=false;
+  view.innerHTML=`<div class="gtop"><div class="crumb">${ic("scale")}Vrai ou faux</div><div class="prog">${st>=2?`<span class="pill">${ic("flame")}Série de ${st}</span>`:""}${dots(V.list.length,V.i)}</div>${ring()}</div>
+  <blockquote class="stmt">${esc(s)}</blockquote>
+  <div class="vf"><button class="vbtn yes" data-v="1">${ic("check")}<span>Vrai</span><kbd>V</kbd></button><button class="vbtn no" data-v="0">${ic("x")}<span>Faux</span><kbd>F</kbd></button></div><div id="fb"></div>`;
+  sfx.reveal();runTimer(VFT,()=>vfAns(-1))}
+function vfAns(v){if(V.done)return;V.done=true;stopTimer();const [,t,ex,r]=V.list[V.i],ok=v===t,last=V.i>=V.list.length-1;
+  view.querySelectorAll(".vbtn").forEach(b=>{b.disabled=true;const bv=+b.dataset.v;if(bv===t)b.classList.add("ok");else if(bv===v)b.classList.add("ko","shk");else b.classList.add("dim")});
+  let p=0;if(ok){V.st[T.cur]=(V.st[T.cur]||0)+1;V.good++;p=10+(V.st[T.cur]>=3?5:0);award(p);sfx.ok()}else{V.st[T.cur]=0;sfx.ko()}
+  $("#fb").innerHTML=fbHTML(ok,ok?`Exact ! +${p} pts`:v<0?"Temps écoulé":"Eh non !",`${p>10?`Bonus de série inclus (${V.st[T.cur]} d'affilée). `:""}C'est ${t?"vrai":"faux"}. ${esc(ex)}`,r)+nextBar(last?"Voir le podium":"Affirmation suivante");
+  armNext(()=>{if(last)podium("Vrai ou faux terminé",`${V.good} ${pl(V.good,"bonne")} ${pl(V.good,"réponse")} sur ${V.list.length}`,btn("vf-again","restart","Rejouer"));else{nextTeam();V.i++;vfQ()}})}
+
+/* ================= Jeopardy ================= */
+let J={done:{}},MODE=null;
+function jeoStart(){J={done:{},dbl:`${Math.floor(Math.random()*5)}-${1+Math.floor(Math.random()*4)}`};jeoDraw()}
+function jeoDraw(){const n=Object.keys(J.done).length;
+  view.innerHTML=`<div class="gtop"><div class="crumb">${ic("grid")}Jeopardy biblique</div><div class="prog"><span class="pill">${ic("star")}Une double mise est cachée</span><span class="cnt">${n} / 25</span></div></div>
+  <div class="jgrid">${JEO.cats.map((c,i)=>`<div class="jh">${ic(JEO.ic[i])}<span>${c}</span></div>`).join("")}
+  ${VAL.map((v,r)=>JEO.cats.map((c,ci)=>{const d=J.done[ci+"-"+r];return d?`<div class="cell dn" aria-label="${esc(c)}, ${v} : jouée"><span class="dd" style="--c:${d.ok?COL[d.t]||"#d9ccb2":"#d9ccb2"}">${ic(d.ok?"check":"x")}</span></div>`:`<button class="cell" data-cell="${ci}-${r}" aria-label="${esc(c)}, ${v} points"><span>${v}</span></button>`}).join("")).join("")}</div>
+  <div class="nx"><button class="btn ghost sm" data-act="jeo-again">${ic("restart")}<span>Nouveau tableau</span></button></div>`}
+function jeoOpen(key){const [c,r]=key.split("-").map(Number),[q,a,ref,ds]=JEO.q[c][r];Object.assign(J,{c,r,key,ans:a,ref,opts:shuf([a,...ds]),dblNow:key===J.dbl,answered:false});J.val=VAL[r]*(J.dblNow?2:1);MODE="jeo";
+  $("#modal").innerHTML=`<div class="mh"><span class="crumb">${ic(JEO.ic[c])}${esc(JEO.cats[c])} · ${J.val} pts · ${tname()}</span>${ring()}</div>${J.dblNow?`<div class="dbl">${ic("star")}Double mise : ${J.val} points en jeu</div>`:""}
+  <p class="q">${esc(q)}</p><div class="opts">${J.opts.map((x,k)=>optHTML(x,k,"j")).join("")}</div><div id="mfb"></div>`;
+  $("#ov").hidden=false;J.dblNow?sfx.dbl():sfx.reveal();runTimer(S.dur,()=>jeoAns(-1))}
+function jeoAns(k){if(J.answered)return;J.answered=true;stopTimer();const ok=k>=0&&J.opts[k]===J.ans;markOpts($("#modal"),"j",J.opts,J.ans,k);
+  award(ok?J.val:(k<0?0:-J.val));ok?sfx.ok():sfx.ko();J.done[J.key]={t:T.cur,ok};const end=Object.keys(J.done).length>=25;
+  $("#mfb").innerHTML=fbHTML(ok,ok?`Bonne réponse ! +${J.val} pts`:k<0?"Temps écoulé":`Raté ! −${J.val} pts`,`Réponse : ${esc(J.ans)}.`,J.ref)+nextBar(end?"Voir le podium":"Retour au tableau");
+  armNext(()=>{closeModal();if(!end)nextTeam();if(end)podium("Tableau terminé","Les 25 cases ont été jouées.",btn("jeo-again","restart","Nouveau tableau"));else jeoDraw()})}
+function closeModal(){$("#ov").hidden=true;MODE=null}
+
+/* ================= Réglages ================= */
+const sw=(k,l,d)=>`<div class="orow"><label for="s-${k}">${l}<small>${d}</small></label><input type="checkbox" class="sw" id="s-${k}" data-s="${k}" ${S[k]?"checked":""}></div>`;
+const sel=(k,l,vals)=>`<div class="orow"><label for="s-${k}">${l}</label><select id="s-${k}" data-s="${k}">${vals.map(v=>`<option value="${v}" ${S[k]==v?"selected":""}>${v} s</option>`).join("")}</select></div>`;
+function openSettings(){if(MODE)return;if(TM)TM.paused=true;pauseAuto();MODE="set";drawSettings();$("#ov").hidden=false;const f=$("#modal input");if(f)f.focus()}
+function drawSettings(){$("#modal").innerHTML=`<div class="set"><div class="mh"><h2>Réglages</h2><button class="x" data-act="close-set" aria-label="Fermer">${ic("x")}</button></div>
+  <h3>Équipes</h3>${T.teams.map((t,i)=>`<div class="trow"><span class="av" style="--c:${COL[i]}">${esc(ini(t.n))}</span><input data-tn="${i}" value="${esc(t.n)}" maxlength="24" aria-label="Nom de l'équipe ${i+1}"><span class="tsc">${t.s} pts</span>${T.teams.length>1?`<button class="x" data-rm="${i}" aria-label="Supprimer ${esc(t.n)}">${ic("x")}</button>`:""}</div>`).join("")}
+  <div class="row"><button class="btn ghost sm" data-act="add-team" ${T.teams.length>=6?"disabled":""}>${ic("plus")}<span>Ajouter une équipe</span></button><button class="btn ghost sm" data-act="zero">${ic("restart")}<span>Scores à zéro</span></button></div>
+  <h3>Déroulement</h3>${sw("auto","Enchaînement automatique","Passe à la suite après le délai choisi")}${sw("sound","Effets sonores","Bonne réponse, erreur, dernières secondes")}${sw("bonus","Bonus de rapidité au quiz","Jusqu'à 50 % de points en plus pour une réponse rapide")}${sel("dur","Temps par question",[10,15,20,30])}${sel("delay","Délai avant la suite",[3,5,8])}
+  <div class="row"><button class="btn gold" data-act="close-set">${ic("check")}<span>Terminé</span></button></div></div>`}
+function closeSettings(){closeModal();if(TM){TM.paused=false;TM.last=performance.now()}if(NXfn)armNext(NXfn)}
+$("#modal").addEventListener("input",e=>{const i=e.target.dataset.tn;if(i!==undefined){T.teams[+i].n=e.target.value.trim()||"Équipe "+(+i+1);renderTeams();const av=e.target.previousElementSibling;if(av)av.textContent=ini(T.teams[+i].n)}});
+$("#modal").addEventListener("change",e=>{const k=e.target.dataset.s;if(!k)return;S[k]=e.target.type==="checkbox"?e.target.checked:+e.target.value;saveS();drawSound()});
+function drawSound(){$("#sbtn").innerHTML=ic(S.sound?"sound":"mute")}
+
+/* ================= Événements ================= */
+document.addEventListener("click",e=>{const b=e.target.closest("button,[data-act]");if(!b||b.disabled)return;const d=b.dataset,a=d.act;
+  if(d.t!==undefined)return setActive(+d.t);
+  if(d.lvl)return quizStart(d.lvl);
+  if(d.k!==undefined)return quizAns(+d.k);
+  if(d.w!==undefined)return whoPick(+d.w);
+  if(d.v!==undefined)return vfAns(+d.v);
+  if(d.cell)return jeoOpen(d.cell);
+  if(d.j!==undefined)return jeoAns(+d.j);
+  if(d.rm!==undefined){T.teams.splice(+d.rm,1);T.cur=Math.min(T.cur,T.teams.length-1);renderTeams();drawSettings();return}
+  if(b.id==="next")return goNext();
+  if(b.id==="pause")return pauseAuto();
+  if(b.id==="j50")return joker50();
+  if(b.id==="jt")return jokerTime();
+  switch(a){
+    case "settings":openSettings();break;
+    case "close-set":closeSettings();break;
+    case "add-team":if(T.teams.length<6){T.teams.push({n:"Équipe "+"ABCDEF"[T.teams.length],s:0});renderTeams();drawSettings()}break;
+    case "zero":T.teams.forEach(t=>t.s=0);renderTeams();drawSettings();break;
+    case "sound":S.sound=!S.sound;saveS();drawSound();sfx.click();break;
+    case "full":try{const p=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(()=>toast("Plein écran indisponible ici"))}catch(err){toast("Plein écran indisponible ici")}break;
+    case "quiz-again":quizStart(Q.lvl||"facile");break;
+    case "quiz-home":quizHome();break;
+    case "who-again":whoStart();break;
+    case "vf-again":vfStart();break;
+    case "jeo-again":jeoStart();break}});
+$("#ov").addEventListener("click",e=>{if(e.target.id==="ov"&&MODE==="set")closeSettings()});
+document.addEventListener("keydown",e=>{if(e.target.matches("input,select,textarea")||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key==="Escape"){if(MODE==="set")closeSettings();return}
+  if((e.key==="Enter"||e.key===" ")&&NXfn&&MODE!=="set"){e.preventDefault();goNext();return}
+  if(MODE==="set")return;const k=e.key.toLowerCase(),i=KM[k];
+  if(MODE==="jeo"){if(i!==undefined&&!J.answered)jeoAns(i);return}
+  if(route==="quiz"&&Q.list.length&&!Q.done&&i!==undefined){const b=view.querySelector(`.opt[data-k="${i}"]`);if(b&&!b.disabled)quizAns(i)}
+  else if(route==="qui"&&W.list&&!W.done&&i!==undefined){const b=view.querySelector(`.opt[data-w="${i}"]`);if(b&&!b.disabled)whoPick(i)}
+  else if(route==="vrai-faux"&&V.list&&!V.done){if(k==="v")vfAns(1);else if(k==="f")vfAns(0)}});
+
+/* ================= Navigation ================= */
+const ROUTES={accueil:home,quiz:quizHome,qui:whoStart,"vrai-faux":vfStart,jeopardy:jeoStart};
+let route="accueil";
+function go(){cancelAll();closeModal();const h=location.hash.slice(1);route=ROUTES[h]?h:"accueil";
+  document.querySelectorAll(".tabs a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+route));
+  view.className=route==="accueil"?"home":"card";ROUTES[route]();window.scrollTo(0,0)}
+addEventListener("hashchange",go);
+drawSound();renderTeams();go();
+}
+</script>
+</body>
+</html>
